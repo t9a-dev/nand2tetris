@@ -11,5 +11,40 @@ CHIP Inc16 {
     OUT out[16];
 
     PARTS:
-    //// Replace this comment with your code.
+    //Add16.hdl(Xor31個,And31個,Or1個)を利用しても実装できる。
+    //こちらの実装のほうが利用するゲートが少なく効率的。(Xor16個,And15個)
+    //trueは書籍P.374に記載あり
+    Xor(a=true,b=in[0],out=out[0]);
+    Xor(a=carry0,b=in[1],out=out[1]);
+    Xor(a=carry1,b=in[2],out=out[2]);
+    Xor(a=carry2,b=in[3],out=out[3]);
+    Xor(a=carry3,b=in[4],out=out[4]);
+    Xor(a=carry4,b=in[5],out=out[5]);
+    Xor(a=carry5,b=in[6],out=out[6]);
+    Xor(a=carry6,b=in[7],out=out[7]);
+    Xor(a=carry7,b=in[8],out=out[8]);
+    Xor(a=carry8,b=in[9],out=out[9]);
+    Xor(a=carry9,b=in[10],out=out[10]);
+    Xor(a=carry10,b=in[11],out=out[11]);
+    Xor(a=carry11,b=in[12],out=out[12]);
+    Xor(a=carry12,b=in[13],out=out[13]);
+    Xor(a=carry13,b=in[14],out=out[14]);
+    Xor(a=carry14,b=in[15],out=out[15]);
+
+    //trueは書籍P.374に記載あり
+    And(a=true,b=in[0],out=carry0);
+    And(a=carry0,b=in[1],out=carry1);
+    And(a=carry1,b=in[2],out=carry2);
+    And(a=carry2,b=in[3],out=carry3);
+    And(a=carry3,b=in[4],out=carry4);
+    And(a=carry4,b=in[5],out=carry5);
+    And(a=carry5,b=in[6],out=carry6);
+    And(a=carry6,b=in[7],out=carry7);
+    And(a=carry7,b=in[8],out=carry8);
+    And(a=carry8,b=in[9],out=carry9);
+    And(a=carry9,b=in[10],out=carry10);
+    And(a=carry10,b=in[11],out=carry11);
+    And(a=carry11,b=in[12],out=carry12);
+    And(a=carry12,b=in[13],out=carry13);
+    And(a=carry13,b=in[14],out=carry14);
 }
