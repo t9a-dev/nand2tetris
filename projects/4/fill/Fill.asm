@@ -9,6 +9,7 @@
 // the screen should be cleared.
 
 //// Replace this comment with your code.
+(START)
 @SCREEN
 D=A
 @n
@@ -22,14 +23,35 @@ M=D
 D=M
 @R1
 D=D-M
-@END
+@START
 D;JEQ
 
+@KBD
+D=M
+@WHITE
+D;JEQ
+@BLACK
+0;JMP
+
+(BLACK)
 @SCREEN
 D=M
 @n
 A=D+M
 M=-1
+@CONTINUE
+0;JMP
+
+(WHITE)
+@SCREEN
+D=M
+@n
+A=D+M
+M=0
+@CONTINUE
+0;JMP
+
+(CONTINUE)
 
 @n
 M=M+1
