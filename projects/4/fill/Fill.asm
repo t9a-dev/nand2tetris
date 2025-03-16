@@ -9,3 +9,33 @@
 // the screen should be cleared.
 
 //// Replace this comment with your code.
+@SCREEN
+D=A
+@n
+M=D
+@24577
+D=A
+@R1
+M=D
+(LOOP)
+@n
+D=M
+@R1
+D=D-M
+@END
+D;JEQ
+
+@SCREEN
+D=M
+@n
+A=D+M
+M=-1
+
+@n
+M=M+1
+
+@LOOP
+0;JMP
+(END)
+@END
+0;JMP
