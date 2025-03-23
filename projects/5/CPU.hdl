@@ -32,5 +32,48 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-	//// Replace this comment with your code.
+    //C命令のデコード
+    And16(a=instruction, b[0]=instruction[15], b[1]=instruction[15],
+          b[2]=instruction[15], b[3]=instruction[15],
+          b[4]=instruction[15], b[5]=instruction[15],
+          b[6]=instruction[15], b[7]=instruction[15],
+          b[8]=instruction[15], b[9]=instruction[15],
+          b[10]=instruction[15], b[11]=instruction[15],
+          b[12]=instruction[15], b[13]=instruction[15],
+          b[14]=instruction[15], b[15]=instruction[15],
+          out[3]=writeM,out[15]=iscoperation,
+          out[12]=a,
+          out[11]=c5,
+          out[10]=c4,
+          out[9]=c3,
+          out[8]=c2,
+          out[7]=c1,
+          out[6]=c0,
+          out[5]=d2,
+          out[4]=d1,
+          out[3]=d0,
+          out[2]=j2,
+          out[1]=j1,
+          out[0]=j0
+          );
+    
+    Mux16(a=instruction,b=aluout,sel=iscoperation,out=aregisterin);
+    Not(in=iscoperation, out=isaoperation);
+    Xor(a=isaoperation, b=d2, out=aregisterload);
+    ARegister(in=aregisterin,load=aregisterload,out=aregisterout,out[0..14]=addressM);
+    DRegister(in=aluout,load=d1,out=dregisterout);
+    Mux16(a=aregisterout,b=inM,sel=a,out=aluin);
+    ALU(x=dregisterout,y=aluin,
+        zx=c5,nx=c4,zy=c3,ny=c2,f=c1,no=c0,
+        ng=ng,zr=zr,out=aluout,out=outM
+    );
+
+    Or(a=ng,b=zr,out=ngorzr);
+    Not(in=ngorzr,out=notngorzr);
+    And(a=j0,b=notngorzr,out=j0andnotngorzr);
+    And(a=j1,b=zr,out=j1andzr);
+    And(a=j2,b=ng,out=j2andng);
+    Or(a=j2andng,b=j1andzr,out=j2andngorj1andzr);
+    Or(a=j0andnotngorzr,b=j2andngorj1andzr,out=pcload);
+    PC(in=aregisterout,inc=true,load=pcload,reset=reset,out[0..14]=pc);
 }
