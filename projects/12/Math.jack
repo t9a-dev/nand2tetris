@@ -15,6 +15,38 @@ class Math {
 
     // Initializes the Math library.
     function void init() {
+        var int shiftedValue,bitCursor;
+
+        let n = 15; // jackではデータ型は16ビット固定で0ビットから数え始めるので-1した15
+        let shiftedValue = 1;
+        let bitCursor = 0;
+
+        // 0~15までループ
+        while( bitCursor < 16){
+            let powersOfTwo[bitCursor] = shiftedValue;
+            let shiftedValue = shiftedValue + shiftedValue; // 左に1ビットシフト001->010
+            let bitCursor = bitCursor + 1;
+        }
+        return;
+    }
+
+    function boolean bit(int x,int i) {
+       var boolean result; 
+       var int bitCursor;
+
+       let result = false;
+       let bitCursor = n;
+
+       // 15~0までループする
+       while(~(n = -1)){
+            if ((x > powersOfTwo[bitCursor]) | (x = powersOfTwo[bitCursor])) {
+                if(i = bitCursor) { result = true; }
+            }
+            let x = x - powersOfTwo[bitCursor];
+            let bitCursor = bitCursor - 1;
+       }
+
+       return result;
     }
 
     /** Returns the product of x and y. 
@@ -22,6 +54,20 @@ class Math {
      *  in an expression, it handles it by invoking this method. 
      *  Thus, in Jack, x * y and Math.multiply(x,y) return the same value. */
     function int multiply(int x, int y) {
+        var int sum,shiftedx,bitCursor;
+
+        let sum = 0;
+        let shiftedx = x;
+        let bitCursor = 0;
+
+        while(bitCursor < (n + 1)){
+            if (bit(y,bitCursor)){
+                let sum = sum + shiftedx;         
+            } 
+            let bitCursor = bitCursor + 1;
+            let shiftedx = shiftedx + shiftedx;
+        }
+        return sum;
     }
 
     /** Returns the integer part of x / y.
@@ -29,6 +75,15 @@ class Math {
      *  an an expression, it handles it by invoking this method.
      *  Thus, x/y and Math.divide(x,y) return the same value. */
     function int divide(int x, int y) {
+        var int q;
+        if(y>x) { return 0; }
+        
+        let q = divide(x,y+y);
+        if ( (x - y) < y ) {
+            return q + q;
+        }else{
+            return q + q + 1;
+        }
     }
 
     /** Returns the integer part of the square root of x. */
