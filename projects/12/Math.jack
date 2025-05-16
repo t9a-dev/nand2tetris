@@ -17,12 +17,13 @@ class Math {
     function void init() {
         var int shiftedValue,bitCursor;
 
-        let n = 15; // jackではデータ型は16ビット固定で0ビットから数え始めるので-1した15
+        let n = 16;
+        let powersOfTwo = Array.new(n);
         let shiftedValue = 1;
         let bitCursor = 0;
 
         // 0~15までループ
-        while( bitCursor < 16){
+        while( bitCursor < n){
             let powersOfTwo[bitCursor] = shiftedValue;
             let shiftedValue = shiftedValue + shiftedValue; // 左に1ビットシフト001->010
             let bitCursor = bitCursor + 1;
@@ -30,23 +31,8 @@ class Math {
         return;
     }
 
-    function boolean bit(int x,int i) {
-       var boolean result; 
-       var int bitCursor;
-
-       let result = false;
-       let bitCursor = n;
-
-       // 15~0までループする
-       while(~(n = -1)){
-            if ((x > powersOfTwo[bitCursor]) | (x = powersOfTwo[bitCursor])) {
-                if(i = bitCursor) { result = true; }
-            }
-            let x = x - powersOfTwo[bitCursor];
-            let bitCursor = bitCursor - 1;
-       }
-
-       return result;
+    function boolean bit(int x,int i){
+       return ~((x & powersOfTwo[i]) = 0); 
     }
 
     /** Returns the product of x and y. 
@@ -60,8 +46,8 @@ class Math {
         let shiftedx = x;
         let bitCursor = 0;
 
-        while(bitCursor < (n + 1)){
-            if (bit(y,bitCursor)){
+        while(bitCursor < n){
+            if (Math.bit(y,bitCursor)){
                 let sum = sum + shiftedx;         
             } 
             let bitCursor = bitCursor + 1;
@@ -75,30 +61,72 @@ class Math {
      *  an an expression, it handles it by invoking this method.
      *  Thus, x/y and Math.divide(x,y) return the same value. */
     function int divide(int x, int y) {
-        var int q;
-        if(y>x) { return 0; }
+        var int q,result;
+        var boolean isPositive;
         
-        let q = divide(x,y+y);
-        if ( (x - y) < y ) {
-            return q + q;
+        let isPositive = ((x < 0) = (y < 0));
+        
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+
+        if( (y+y) < 0) { return 0; } // 二乗したyがマイナスだとオーバーフローしている
+        if( y > x ) { return 0; }
+
+        let q = Math.divide(x,y+y);
+        
+        if((x-(2*q*y)) < y){
+            let result = q+q;
         }else{
-            return q + q + 1;
+            let result = q+q+1;
         }
+
+        if(isPositive) { return result; }
+        return Math.reverseSign(result);
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
+        var int y,bitCursor,temp,squaringTemp;
+        
+        let y = 0;
+        let bitCursor = (n/2) - 1;
+
+        while(~(bitCursor < 0)){
+            let temp = y + powersOfTwo[bitCursor];
+            let squaringTemp = temp * temp;
+            if(~(squaringTemp > x) & (squaringTemp > 0)){
+                let y = temp;
+            }
+            let bitCursor = bitCursor - 1;
+        }
+        return y;
     }
 
     /** Returns the greater value. */
     function int max(int a, int b) {
+        if ( a > b) {
+            return a;
+        } else{
+            return b;
+        }
     }
 
     /** Returns the smaller value. */
     function int min(int a, int b) {
+        if ( a < b) {
+            return a;
+        } else{
+            return b;
+        }
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+        if (x < 0) { return Math.reverseSign(x); }
+        return x;
+    }
+
+    function int reverseSign(int x){
+        return ~x+1;
     }
 }

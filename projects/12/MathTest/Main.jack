@@ -29,6 +29,42 @@ class Main {
         let r[12] = Math.abs(27);          // 27
         let r[13] = Math.abs(-32767);      // 32767
         
+        // Math.bit tests
+       // ok: let r[14] = Math.bit(5,0);         // -1 
+       // ok: let r[15] = Math.bit(5,1);         // 0 
+       // ok: let r[16] = Math.bit(5,2);         // -1 
+       // ok: let r[17] = Math.bit(5,3);         // 0
+
+       // ok: let r[18] = Math.bit(-6,0);         // 0
+       // ok: let r[19] = Math.bit(-6,1);         // -1
+       // ok: let r[20] = Math.bit(-6,2);         // 0
+       // ok: let r[21] = Math.bit(-6,3);         // -1
+
+       // ok: let r[22] = Math.bit(-3,0);         // -1 
+       // ok: let r[23] = Math.bit(-3,1);         // 0
+       // ok: let r[24] = Math.bit(-3,2);         // -1
+       // ok: let r[25] = Math.bit(-3,3);         // -1
+
+       // ok: let r[26] = Math.bit(3,0);         // -1 
+       // ok: let r[27] = Math.bit(3,1);         // -1
+       // ok: let r[28] = Math.bit(3,2);         // 0
+       // ok: let r[29] = Math.bit(3,3);         // 0
+
+       // ok: let r[30] = Math.bit(30,0);         // 0 
+       // ok: let r[31] = Math.bit(30,1);         // -1 
+       // ok: let r[32] = Math.bit(30,2);         // -1
+       // ok: let r[33] = Math.bit(30,3);         // -1
+
+       // ok: let r[34] = Math.bit(30,4);         // -1
+       // ok: let r[35] = Math.bit(30,5);         // 0
+       // ok: let r[36] = Math.bit(-30,0);         // 0 
+       // ok: let r[37] = Math.bit(-30,1);         // -1 
+
+       // ok: let r[38] = Math.bit(-30,2);         // 0
+       // ok: let r[39] = Math.bit(-30,3);         // 0
+       // ok: let r[40] = Math.bit(-30,4);         // 0
+       // ok: let r[41] = Math.bit(-30,15);        // -1 
+        
         return;
     }
 }
