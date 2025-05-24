@@ -1,0 +1,111 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+/**
+ * This library provides two services: direct access to the computer's main
+ * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+ * consists of 32,768 words, each holding a 16-bit binary number.
+ */ 
+class Memory {
+    static int heapBase;
+    static int ramSize;
+
+    static Array memory;
+    static Array freeList;
+
+    /** Initializes the class. */
+    function void init() {
+        let heapBase = 2048; // Jackにおけるヒープ領域の開始アドレス
+        let ramSize = 16384; // JackハードウェアのRAMは16K(16 * 2 ^ 10) 
+        let memory = 0;
+        let freeList = heapBase; 
+        
+        // heapBaseからramSizeの範囲をfreeListブロックにヒープ領域全体の長さとして指定
+        // RAM[2048]にヒープ領域全体の長さを保持したいのでfreeList[0]としている
+        let freeList[0] = ramSize - heapBase; 
+        let freeList[1] = null; //初期化時点ではヒープ領域は確保していないので次のアドレスは未定
+        
+        return;
+    }
+
+    /** Returns the RAM value at the given address. */
+    function int peek(int address) {
+        return memory[address];
+    }
+
+    /** Sets the RAM value at the given address to the given value. */
+    function void poke(int address, int value) {
+        let memory[address] = value;
+        
+        return;
+    }
+
+    /** Finds an available RAM block of the given size and returns
+     *  a reference to its base address. */
+    function int alloc(int size) {
+        var int currAddr,newAddr,currSize,newSize,nextAddr,blockSize;
+        var Array block;
+
+        let block = null;
+        let blockSize = size + 1; //ブロック全体のサイズはヘッダー情報を含めて指定されたサイズ+1となる
+        let currAddr = freeList;
+        let currSize = freeList[0];
+        let nextAddr = freeList[1];
+        let newAddr = currAddr + blockSize;
+        let newSize = currSize - blockSize; 
+
+        // freeListに次のブロックへのポインタが無い場合はヒープ領域全体が空
+        if (nextAddr = 0) {
+           let block = currAddr;
+           let block[0] = blockSize;
+           let freeList = newAddr;
+           let freeList[0] = newSize;
+
+           return block + 1; //block[0]のアドレスはヘッダー(ブロックのサイズ)なのでペイロードの開始アドレスを返す
+        }
+
+        while(~(nextAddr = 0)){
+            let currSize = nextAddr[-1];
+
+            // 現在見ているブロックのサイズが必要なサイズを満たしていれば利用する
+            if(~(currSize < blockSize)){
+                let currAddr = nextAddr; 
+                let newAddr = currAddr + blockSize;
+                let newSize = currSize - blockSize;
+                let block = currAddr;
+                let block[0] = blockSize;
+                let freeList = newAddr;
+                let freeList[0] = newSize; 
+
+                return block + 1; //block[0]のアドレスはヘッダー(ブロックのサイズ)なのでペイロードの開始アドレスを返す
+            }
+
+            // 次のブロックのアドレスを取得
+            let nextAddr = nextAddr[0];
+        }
+
+        if(block = null){
+            do Sys.error(1);
+        }
+
+        return block + 1; //block[0]のアドレスはヘッダー(ブロックのサイズ)なのでペイロードの開始アドレスを返す
+    }
+
+    /** De-allocates the given object (cast as an array) by making
+     *  it available for future allocations. */
+    function void deAlloc(Array o) {
+        var int prevList;
+
+        // 現在のfreeListを退避
+        let prevList = freeList;
+        // deAllocで指定されたオブジェクト(オブジェクトのベースアドレス)をfreeListの先頭にする
+        let freeList = o;
+        // オブジェクトのベースアドレス-1にはヘッダーとしてブロックのサイズが入っているのでfreeListのサイズとして設定
+        let freeList[0] = o[-1];
+        // 退避していた旧freeListを現在のfreeListの次のブロックアドレスとして設定
+        let freeList[1] = prevList + 1;
+
+        return;
+    }    
+}
