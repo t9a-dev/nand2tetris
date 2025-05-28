@@ -17,6 +17,7 @@ class Screen {
     function void init() {
        var int i,shiftedVal; 
        
+       let color = true;
        let screen = 16384; // Hackにおけるスクリーンに対応する開始アドレス
        let twoToThe = Array.new(16);
        let i = 0;
@@ -169,6 +170,15 @@ class Screen {
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      *  and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int i,height;
+        let height = y2-y1;
+        let i = 0;
+
+        while(i<height){
+            do Screen.drawLine(x1,y1+i,x2,y1+i);
+            let i = i+1;
+        }
+
         return;
     }
 
