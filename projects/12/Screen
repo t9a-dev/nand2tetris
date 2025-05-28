@@ -18,7 +18,6 @@ class Screen {
        var int i,shiftedVal; 
        
        let screen = 16384; // Hackにおけるスクリーンに対応する開始アドレス
-       let twoToThe = Array.new(16);
        let i = 0;
        let shiftedVal = 1;
 
@@ -27,8 +26,6 @@ class Screen {
            let i = i + 1;
            let shiftedVal = shiftedVal + shiftedVal;
        }
-
-       return;
     }
 
     /** Erases the entire screen. */
@@ -55,7 +52,7 @@ class Screen {
     function void drawPixel(int x, int y) {
        var int addr,bitCursol,mask;
 
-       let addr = (y * 32) + (x / 16);
+       let addr = screen + (y * 32) + (x / 16);
        let bitCursol = x & 15; // col % 16
        let mask = twoToThe[bitCursol]; // 初期化済のtwoToTheから対応する10進の値を取り出す
        
@@ -70,7 +67,7 @@ class Screen {
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
-        var int x,y,dx,dy,swapTemp,a,b,diff;
+        var int dx,dy,a,b,diff;
 
         // 横方向への移動なし(垂直線を描画)
         if (x1 = x2){
@@ -87,7 +84,6 @@ class Screen {
                 do Screen.drawPixel(x1,y1);
                 let y1 = y1 + dy;
             }
-            do Screen.drawPixel(x1,y1);
              
             return;
         }
@@ -107,7 +103,6 @@ class Screen {
                 do Screen.drawPixel(x1,y1);
                 let x1 = x1 + dx;
             }
-            do Screen.drawPixel(x1,y1);
             
             return;
         }
@@ -115,52 +110,19 @@ class Screen {
         let a=0;
         let b=0;
         let diff=0;
-        
-        // dxがマイナスの場合は始点と終点の座標を入れ替えて常に始点から右(dxがプラス)に向かうようにする
-        if ((x2 - x1)< 0){
-            let swapTemp = x1;
-            let x1 = x2;
-            let x2 = swapTemp;
-            
-            let swapTemp = y1;
-            let y1 = y2;
-            let y2 = swapTemp;
-        }
         let x = x1;
         let y = y1;
         let dx = x2 - x1;
         let dy = y2 - y1;
-
-        // 右上
-        if(dy < 0){
-            while( (~(a>dx)) & ((b>dy))){
-                do Screen.drawPixel(x+a,y+b);
-                
-                if(diff < 0){
-                    let a=a+1;
-                    let diff=diff-dy;
-                }else{
-                    let b=b-1;
-                    let diff=diff-dx;
-                }
+        while(~(a>dx) & ~(b>dy)){
+            do Screen.drawPixel(x+a,y+b);
+            if(diff < 0) {
+                let a = a + 1;
+                let diff = diff + dy;
+            }else{
+                let b = b + 1;
+                let diff = diff - dx;
             }
-            return ;
-        }
-
-        // 右下
-        if(dy > 0){
-            while( (~(a>dx)) & (~(b>dy))){
-                do Screen.drawPixel(x+a,y+b);
-                
-                if(diff < 0){
-                    let a=a+1;
-                    let diff=diff+dy;
-                }else{
-                    let b=b+1;
-                    let diff=diff-dx;
-                }
-            }
-            return ;
         }
         
         return;
