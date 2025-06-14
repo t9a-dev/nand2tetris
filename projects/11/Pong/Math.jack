@@ -1,0 +1,132 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Math.jack
+/**
+ *  A library of commonly used mathematical functions.
+ *  All functions runs in O(n), where n is the number of bits used
+ *  for representing a two's complement integer value (16 in the Hack computer). 
+ *  Note: Jack compilers implement multiplication and division
+ *  using calls to OS functions in this class.
+ */
+class Math {
+    static int n;             // Number of bits used for representing a two's complement integer
+    static Array powersOfTwo; // Stores 2^0, 2^1, 2^2,..., 2^(n-1)
+
+    // Initializes the Math library.
+    function void init() {
+        var int shiftedValue,bitCursor;
+
+        let n = 16;
+        let powersOfTwo = Array.new(n);
+        let shiftedValue = 1;
+        let bitCursor = 0;
+
+        // 0~15までループ
+        while( bitCursor < n){
+            let powersOfTwo[bitCursor] = shiftedValue;
+            let shiftedValue = shiftedValue + shiftedValue; // 左に1ビットシフト001->010
+            let bitCursor = bitCursor + 1;
+        }
+        return;
+    }
+
+    function boolean bit(int x,int i){
+       return ~((x & powersOfTwo[i]) = 0); 
+    }
+
+    /** Returns the product of x and y. 
+     *  When a Jack compiler detects the multiplication operator '*'
+     *  in an expression, it handles it by invoking this method. 
+     *  Thus, in Jack, x * y and Math.multiply(x,y) return the same value. */
+    function int multiply(int x, int y) {
+        var int sum,shiftedx,bitCursor;
+
+        let sum = 0;
+        let shiftedx = x;
+        let bitCursor = 0;
+
+        while(bitCursor < n){
+            if (Math.bit(y,bitCursor)){
+                let sum = sum + shiftedx;         
+            } 
+            let bitCursor = bitCursor + 1;
+            let shiftedx = shiftedx + shiftedx;
+        }
+        return sum;
+    }
+
+    /** Returns the integer part of x / y.
+     *  When a Jack compiler detects the division operator '/'
+     *  an an expression, it handles it by invoking this method.
+     *  Thus, x/y and Math.divide(x,y) return the same value. */
+    function int divide(int x, int y) {
+        var int q,result;
+        var boolean isPositive;
+        
+        let isPositive = ((x < 0) = (y < 0));
+        
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+
+        if( (y+y) < 0) { return 0; } // 二乗したyがマイナスだとオーバーフローしている
+        if( y > x ) { return 0; }
+
+        let q = Math.divide(x,y+y);
+        
+        if((x-(2*q*y)) < y){
+            let result = q+q;
+        }else{
+            let result = q+q+1;
+        }
+
+        if(isPositive) { return result; }
+        return Math.reverseSign(result);
+    }
+
+    /** Returns the integer part of the square root of x. */
+    function int sqrt(int x) {
+        var int y,bitCursor,temp,squaringTemp;
+        
+        let y = 0;
+        let bitCursor = (n/2) - 1;
+
+        while(~(bitCursor < 0)){
+            let temp = y + powersOfTwo[bitCursor];
+            let squaringTemp = temp * temp;
+            if(~(squaringTemp > x) & (squaringTemp > 0)){
+                let y = temp;
+            }
+            let bitCursor = bitCursor - 1;
+        }
+        return y;
+    }
+
+    /** Returns the greater value. */
+    function int max(int a, int b) {
+        if ( a > b) {
+            return a;
+        } else{
+            return b;
+        }
+    }
+
+    /** Returns the smaller value. */
+    function int min(int a, int b) {
+        if ( a < b) {
+            return a;
+        } else{
+            return b;
+        }
+    }
+
+    /** Returns the absolute value of x. */
+    function int abs(int x) {
+        if (x < 0) { return Math.reverseSign(x); }
+        return x;
+    }
+
+    function int reverseSign(int x){
+        return ~x+1;
+    }
+}
