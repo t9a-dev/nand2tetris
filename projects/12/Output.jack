@@ -218,6 +218,8 @@ class Output {
             let row = 0;
         }
 
+        do Output.eraseCurrentCursor();
+
         return;
     }
 
@@ -294,9 +296,14 @@ class Output {
 
     /** Moves the cursor one column back. */
     function void backSpace() {
-        var int currCol,currRow,i,j;
-
         do Output.moveCursor(row,col-1);
+        do Output.eraseCurrentCursor();
+        
+        return;
+    }
+
+    function void eraseCurrentCursor(){
+        var int currCol,currRow,i,j;
 
         let i = 0;
         let j = 0;
